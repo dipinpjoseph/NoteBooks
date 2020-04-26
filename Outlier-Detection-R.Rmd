@@ -3,30 +3,126 @@ title: "Outlier Detection in R"
 author: "Dipin P Joseph"
 date: "26/04/2020"
 output:
+
   prettydoc::html_pretty:
+    
     theme: cayman
+    
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+In this post we will go through different outlier detection methods and topics like,
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+* Power Transformation (Yeo Johnson Transform) and Density Plots
+* Box Plots and 5 Point Summary Statistics
+* Z-Score
+* Histograms and Scatter Plots
+* Mosaic Plots and Bag Plots
+* Mahalanobis Distance
+* Cook's Distance
+* DBScan 
+* Local Outlier Factors
+* 1-class Support Vector Machine
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Dataset under consideration - **Males** (from package - _Ecdat_)
 
-```{r cars}
-summary(cars)
+First, we will explore more about data using __str()__, __summary()__ methods,
+
+```{r}
+library(Ecdat)
+summary(Males)
+str(Males)
 ```
 
-## Including Plots
+## Train-Test Split
 
-You can also embed plots, for example:
+Here, we will split data to training and testing set. 70% will go for training and 30% for testing.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+set.seed(7)
+# 70% of the sample size
+smp_size <- floor(0.7 * nrow(Males))
+
+# Train and Test Split
+train_ind <- sample(seq_len(nrow(Males)), size = smp_size)
+tr <- Males[train_ind,]
+te <- Males[-train_ind,]
+
+# Column names split
+cols <- colnames(Males)
+cols_num <-cols[3:4]
+cols_num_all <- c(cols_num, cols[9])
+cols_cat <- c(cols[5:8],cols[10:12])
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Yeo-Johnson Transformation
+
+Most of the methods will only work well with normalized data. So, we have to transform our variables to another form which are more normally distributed. Yeo-Johnson tansformation will help us here,
+
+```{r}
+library(plotly)
+library(recipes)
+
+# Performing Yeo Johnson transform for Normalization
+# Setting variable price as outcome and remaining numerics as predictors
+yj_estimates <-
+  recipe(as.formula(paste("wage ~ ", paste(cols_num, collapse = " + "))), data = tr) %>%
+  # Power transformation step
+  step_YeoJohnson(all_numeric()) %>%
+  # Feeds training data
+  prep(data = tr)
+# The trained process is run of test set
+yj_t <- bake(yj_estimates, te)
+
+```
+
+## Density Plot
+
+To display effect of YJ transform density of one variable before and after transformation is plotted.
+
+```{r}
+de_b <- density(te$exper)
+de_b <- data.frame(x = de_b$x, y = de_b$y)
+before <- plot_ly(data=de_b, x = ~x, y = ~y)
+layout(
+  add_lines(before),
+  title = "Density plot of non-transformed variable"
+)
+```
+```{r}
+de_a <- density(yj_t$exper)
+de_a <- data.frame(x = de_a$x, y = de_a$y)
+after <- plot_ly(data=de_a, x = ~x, y = ~y)
+layout(
+  add_lines(after),
+  title = "Density plot of transformed variable"
+)
+```
+## Univariate Outlier Detection
+
+## Box Plots
+
+Now, let's plot box plots for neumeric variables in the dataset. If you see a datapoint outside the whiskers, then you need to examine that particuar observation.
+
+```{r}
+        bp <- plot_ly(data = yj_t, type = 'box')
+        for (k in 1:length(cols_num_all)) {
+            dfk <- data.frame(y = yj_t[[cols_num_all[k]]])
+            bp <-
+                add_trace(
+                    bp,
+                    y = ~ y,
+                    data = dfk,
+                    name = cols_num_all[k],
+                    notched = TRUE,
+                    text =  ~ y
+                )
+        }
+        
+        layout(bp,
+               yaxis = list(title = "Value"))
+```
+
