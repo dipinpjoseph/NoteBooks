@@ -14,7 +14,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this post we will go through different outlier detection methods and topics like,
+In this post, we will go through different outlier detection methods and topics like,
 
 * Power Transformation (Yeo Johnson Transform) and Density Plots
 * Box Plots and 5 Point Summary Statistics
@@ -105,7 +105,7 @@ layout(
 
 ## Box Plots
 
-Now, let's plot box plots for neumeric variables in the dataset. If you see a datapoint outside the whiskers, then you need to examine that particuar observation.
+Now, let's plot box plots for numeric variables in the dataset. If you see a datapoint outside the whiskers, then you need to examine that particular observation.
 
 ```{r}
         bp <- plot_ly(data = yj_t, type = 'box')
@@ -124,5 +124,26 @@ Now, let's plot box plots for neumeric variables in the dataset. If you see a da
         
         layout(bp,
                yaxis = list(title = "Value"))
+```
+
+## Five Number Summary
+
+Boxplots are created on basis of 5 number summary. This includes,
+
+* Minimum
+* Q1 - 25%
+* Median
+* Q3 - 75%
+* Maximum
+
+Let's detect 5 number summary for variable __wages__,
+
+```{r}
+  fnum = (fivenum(yj_t$wage))
+  print(fnum)
+  # Calculating end point of whiskers
+  low = fnum[2] - 1.5 * (fnum[4] - fnum[2])
+  high = fnum[4] + 1.5 * (fnum[4] - fnum[2])
+  print(paste("Outliers are outside region",low,high))
 ```
 
