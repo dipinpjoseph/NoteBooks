@@ -48,14 +48,14 @@ smp_size <- floor(0.7 * nrow(Males))
 
 # Train and Test Split
 train_ind <- sample(seq_len(nrow(Males)), size = smp_size)
-tr <- Males[train_ind,]
-te <- Males[-train_ind,]
+tr <- Males[train_ind, ]
+te <- Males[-train_ind, ]
 
 # Column names split
 cols <- colnames(Males)
-cols_num <-cols[3:4]
+cols_num <- cols[3:4]
 cols_num_all <- c(cols_num, cols[9])
-cols_cat <- c(cols[5:8],cols[10:12])
+cols_cat <- c(cols[5:8], cols[10:12])
 ```
 
 ## Yeo-Johnson Transformation
@@ -86,20 +86,16 @@ To display effect of YJ transform density of one variable before and after trans
 ```{r}
 de_b <- density(te$exper)
 de_b <- data.frame(x = de_b$x, y = de_b$y)
-before <- plot_ly(data=de_b, x = ~x, y = ~y)
-layout(
-  add_lines(before),
-  title = "Density plot of non-transformed variable"
-)
+before <- plot_ly(data = de_b, x = ~ x, y = ~ y)
+layout(add_lines(before),
+       title = "Density plot of non-transformed variable")
 ```
 ```{r}
 de_a <- density(yj_t$exper)
 de_a <- data.frame(x = de_a$x, y = de_a$y)
-after <- plot_ly(data=de_a, x = ~x, y = ~y)
-layout(
-  add_lines(after),
-  title = "Density plot of transformed variable"
-)
+after <- plot_ly(data = de_a, x = ~ x, y = ~ y)
+layout(add_lines(after),
+       title = "Density plot of transformed variable")
 ```
 ## Univariate Outlier Detection
 
@@ -108,22 +104,22 @@ layout(
 Now, let's plot box plots for numeric variables in the dataset. If you see a datapoint outside the whiskers, then you need to examine that particular observation.
 
 ```{r}
-        bp <- plot_ly(data = yj_t, type = 'box')
-        for (k in 1:length(cols_num_all)) {
-            dfk <- data.frame(y = yj_t[[cols_num_all[k]]])
-            bp <-
-                add_trace(
-                    bp,
-                    y = ~ y,
-                    data = dfk,
-                    name = cols_num_all[k],
-                    notched = TRUE,
-                    text =  ~ y
-                )
-        }
-        
-        layout(bp,
-               yaxis = list(title = "Value"))
+bp <- plot_ly(data = yj_t, type = 'box')
+for (k in 1:length(cols_num_all)) {
+  dfk <- data.frame(y = yj_t[[cols_num_all[k]]])
+  bp <-
+    add_trace(
+      bp,
+      y = ~ y,
+      data = dfk,
+      name = cols_num_all[k],
+      notched = TRUE,
+      text =  ~ y
+    )
+}
+
+layout(bp,
+       yaxis = list(title = "Value"))
 ```
 
 ## Five Number Summary
@@ -139,11 +135,74 @@ Boxplots are created on basis of 5 number summary. This includes,
 Let's detect 5 number summary for variable __wages__,
 
 ```{r}
-  fnum = (fivenum(yj_t$wage))
-  print(fnum)
-  # Calculating end point of whiskers
-  low = fnum[2] - 1.5 * (fnum[4] - fnum[2])
-  high = fnum[4] + 1.5 * (fnum[4] - fnum[2])
-  print(paste("Outliers are outside region",low,high))
+fnum = (fivenum(yj_t$wage))
+print(fnum)
+# Calculating end point of whiskers
+low = fnum[2] - 1.5 * (fnum[4] - fnum[2])
+high = fnum[4] + 1.5 * (fnum[4] - fnum[2])
+print(paste("Outliers are outside region", low, high))
+```
+
+## Histogram
+
+ A histogram is a frequency distribution of given data. It's major purpose here is to get a visual idea about skewness, range, value distribution of each numeric variable. Histogram for __wage__ be like,
+ 
+```{r}
+hist <- plot_ly(data = te,
+                x = ~ wage,
+                type = "histogram")
+
+layout(hist,
+       xaxis = list(title = "wage"),
+       margin = list(t = 80))
+```
+ 
+## Z-Score
+
+Z-score is a measure of relationship between an observation with mean and standard deviation of group of observations. Usually, a z-score outside (-3,+3) is considered as a novelty. Outliers found for __wage__ using Z Score is as follows,
+
+```{r}
+rows_w <- c()
+dfk <- scale(yj_t$wage)
+for (i in 1:length(dfk)) {
+  if (dfk[i] > 3 | dfk[i] < -3) {
+    rows_w = c(rows_w, i)
+  }
+}
+te[rows_w,]
+```
+
+## Bivariate Outlier Detection
+
+Now onwards we will see how to identify outliers when 2 or more variables are combined,
+
+## Sactter Plot
+
+From the scatter plot one can manually identify outliers by considering two vairables. Let's plot for variables __school__ and __exper__,
+
+```{r}
+h_dat = paste("Obs No :",
+              rownames(te))
+sc <-
+  plot_ly(
+    data = yj_t,
+    x = ~school,
+    y = ~exper,
+    hover_data = 'text',
+    text = h_dat
+  )
+layout(sc,
+       yaxis = list(title = "school"),
+       xaxis = list(title = "exper")
+)
+```
+
+## Bag Plot
+
+ Bag plot is an improved version of box plot capable of finding outliers in 2/3 dimension data. Using package aplpack::bagplot, it was possible to visualize and fetch outliers in selected variables. 
+ 
+```{r}
+library(aplpack)
+bagplot(yj_t$school, yj_t$exper)
 ```
 
