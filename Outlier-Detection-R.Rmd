@@ -31,7 +31,7 @@ Dataset under consideration - **Males** (from package - _Ecdat_)
 
 First, we will explore more about data using __str()__, __summary()__ methods,
 
-```{r}
+```{r message=FALSE}
 library(Ecdat)
 summary(Males)
 str(Males)
@@ -41,7 +41,7 @@ str(Males)
 
 Here, we will split data to training and testing set. 70% will go for training and 30% for testing.
 
-```{r}
+```{r message=FALSE}
 set.seed(7)
 # 70% of the sample size
 smp_size <- floor(0.7 * nrow(Males))
@@ -62,7 +62,7 @@ cols_cat <- c(cols[5:8], cols[10:12])
 
 Most of the methods will only work well with normalized data. So, we have to transform our variables to another form which are more normally distributed. Yeo-Johnson tansformation will help us here,
 
-```{r}
+```{r message=FALSE}
 library(plotly)
 library(recipes)
 
@@ -83,14 +83,14 @@ yj_t <- bake(yj_estimates, te)
 
 To display effect of YJ transform density of one variable before and after transformation is plotted.
 
-```{r}
+```{r message=FALSE}
 de_b <- density(te$exper)
 de_b <- data.frame(x = de_b$x, y = de_b$y)
 before <- plot_ly(data = de_b, x = ~ x, y = ~ y)
 layout(add_lines(before),
        title = "Density plot of non-transformed variable")
 ```
-```{r}
+```{r message=FALSE}
 de_a <- density(yj_t$exper)
 de_a <- data.frame(x = de_a$x, y = de_a$y)
 after <- plot_ly(data = de_a, x = ~ x, y = ~ y)
@@ -103,7 +103,7 @@ layout(add_lines(after),
 
 Now, let's plot box plots for numeric variables in the dataset. If you see a datapoint outside the whiskers, then you need to examine that particular observation.
 
-```{r}
+```{r message=FALSE}
 bp <- plot_ly(data = yj_t, type = 'box')
 for (k in 1:length(cols_num_all)) {
   dfk <- data.frame(y = yj_t[[cols_num_all[k]]])
@@ -134,7 +134,7 @@ Boxplots are created on basis of 5 number summary. This includes,
 
 Let's detect 5 number summary for variable __wages__,
 
-```{r}
+```{r message=FALSE}
 fnum = (fivenum(yj_t$wage))
 print(fnum)
 # Calculating end point of whiskers
@@ -147,7 +147,7 @@ print(paste("Outliers are outside region", low, high))
 
  A histogram is a frequency distribution of given data. It's major purpose here is to get a visual idea about skewness, range, value distribution of each numeric variable. Histogram for __wage__ be like,
  
-```{r}
+```{r message=FALSE}
 hist <- plot_ly(data = te,
                 x = ~ wage,
                 type = "histogram")
@@ -161,7 +161,7 @@ layout(hist,
 
 Z-score is a measure of relationship between an observation with mean and standard deviation of group of observations. Usually, a z-score outside (-3,+3) is considered as a novelty. Outliers found for __wage__ using Z Score is as follows,
 
-```{r}
+```{r message=FALSE}
 rows_w <- c()
 dfk <- scale(yj_t$wage)
 for (i in 1:length(dfk)) {
@@ -180,7 +180,7 @@ Now onwards we will see how to identify outliers when 2 or more variables are co
 
 From the scatter plot one can manually identify outliers by considering two vairables. Let's plot for variables __school__ and __exper__,
 
-```{r}
+```{r message=FALSE}
 h_dat = paste("Obs No :",
               rownames(te))
 sc <-
@@ -201,7 +201,7 @@ layout(sc,
 
  Bag plot is an improved version of box plot capable of finding outliers in 2/3 dimension data. Using package aplpack::bagplot, it was possible to visualize and fetch outliers in selected variables. 
  
-```{r}
+```{r message=FALSE} 
 library(aplpack)
 bagplot(yj_t$school, yj_t$exper)
 ```
