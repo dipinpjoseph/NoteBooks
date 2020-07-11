@@ -2,31 +2,34 @@
 title: "Titanic Dataset - Survival Prediction"
 author: "Dipin P Joseph"
 date: "7/9/2020"
-output: html_document
+output:
+  prettydoc::html_pretty:
+    theme: cayman
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+** Work in Progres **
 
+## Problem Statement
 
-## R Markdown
+In this notebook we are dealing with one of the most common classification problems - "Predicting survival rate of Titanic passengers based on available characteristics".
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+This problem is hosted as a Kaggle competition and can be accessed by https://www.kaggle.com/c/titanic.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+In short, the goal is to create a binary classification model which predict if a person survives or not in titanic shipwreck based on features like their age, sex, financial situation etc.
 
-```{r cars}
-summary(cars)
-```
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
