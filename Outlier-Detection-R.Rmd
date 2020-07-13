@@ -38,6 +38,18 @@ summary(Males)
 str(Males)
 ```
 
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
 
 ## Train-Test Split
 
@@ -175,6 +187,18 @@ for (i in 1:length(dfk)) {
 }
 te[rows_w,]
 ```
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 
 ## Bivariate Outlier Detection
 
