@@ -61,25 +61,216 @@ with zipfile.ZipFile("titanic.zip","r") as zip_ref:
 # Loading Dataset
 #! pip3 install pandas
 import pandas as pd
+pd.set_option('display.expand_frame_repr', False)
 
 df_train = pd.read_csv('titanic_data/train.csv')
 df_test = pd.read_csv('titanic_data/test.csv')
 print(df_train.head())
 print(df_test.head())
 
+# Passenger Ids from 892 are part of test data.
+df_train = pd.concat([df_train, df_test])
+df_train.index = df_train.PassengerId
+
 ```
 ```{python}
-# Summary of Train Data
+# Summary of Data
 df_train.describe()
 ```
+The range of _Fare_ is huge and we may assume 0.0 Fare was for the ship's staffs.
 
 ```{python}
 # Visualization - Missing Values
+
+# Columns with NAs
+print(df_train.columns[df_train.isna().any()].tolist())
+
 #! pip3 install missingno
 import missingno as msno
 # %matplotlib inline
 
 msno.matrix(df_train)
+
+```
+
+From the plot, we could see that columns _Age_ and _Cabin_ posses a lot of NAs. _Age_ seems important and let's look into suitable NA imputation steps.
+
+Let's check missingness in _Embarked_ and remove corresponding rows according to the result.
+
+```{python}
+
+df_train.Embarked.mode().iloc[0]
+
+# Filling Fare with median
+df_train.Fare.fillna(df_train.Fare.median(), inplace=True)
+
+# Rows with missing values for Embarked
+print(df_train.loc[~df_train['Embarked'].isin(['S','Q','C'])])
+
+# Fill those two rows with most frequent values
+df_train.Embarked.fillna(df_train.Embarked.mode().iloc[0], inplace=True)
+
+```
+
+Let's check the influence of _Pclass_ and _Sex_ on _Age_ by box plot visualizations.
+
+
+```{python}
+
+# Boxplot of Age on Ticket and Sex categories
+df_train.boxplot(column='Age',by=['Pclass','Sex'])
+
+```
+
+From the figure a general inference is that female passengers are younger than males and parameter age is closely related to ticket class.
+Median based imputing seems to be fit in this case. We will split train data into 6 categories and finds median on each category. Later these values will replace NAs in _Age_.
+
+
+```{python}
+
+# Fill NAs with median of each group
+df_train['Age'] = df_train.groupby(['Pclass','Sex'])['Age'].apply(lambda x: x.fillna(x.median()))
+print((df_train[df_train.Age.isna()].index))
+df_train.head()
+
+```
+## Feature Selection
+
+Columns _SibSp_ and _Parch_ gives info about family members onboard. We can unify these to create ne column _family_mem_.
+
+```{python}
+
+# New column family_mem = sum of siblings+parents/children+self
+df_train['family_mem'] = df_train.SibSp+df_train.Parch+1
+df_train.head()
+
+```
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+```{python}
+
+print(list(df_train))
+
+```
+
+## Numeric to Categorical/Factors
+
+Age in our datase is actually ordinal but treated as numeric at the moment. We will look how age is distributed and convert ages to different categories.
+
+```{python}
+
+import matplotlib.pyplot as plt 
+# Histogram of Age column
+df_train['Age'].plot(kind='hist')
+plt.show()
+
+
+```
+
+It seems majority of passengers belongs to age group 20-30. Let's divide age range(0-80) to four categories: 0-20, 21-40, 41-60, 61-80.
+```{python}
+
+bins = [0, 20, 40, 60, 80]
+names = ['0-20', '21-40', '41-60', '61-80']
+
+df_train['AgeRange'] = pd.cut(df_train['Age'], bins, labels=names)
+
+# Categorize Pclass aswell
+df_train.Pclass = pd.Categorical(df_train.Pclass)
+
+print (df_train.dtypes)
+
+```
+
+Columns _Name_, _Age_, _SibSp_, _Parch_, _Ticket_, _Cabin_ could be dropped since they are not adding any significant information.
+
+```{python}
+
+# Dropping unnecessary columns
+df_train.drop([ 'Name', 'Age', 'SibSp', 'Parch', 'Ticket', 'Cabin'], axis=1, inplace=True)
+df_train.head(3)
+
+```
+
+## Train/Test Split
+
+Here, we will detach test data (PassengerIds from 892) to different dataframe. The step is required to avoid data leakage issue in later stages.
+
+```{python}
+
+# Rows from 893 onwards belongs to test data
+
+df_test = df_train.iloc[891:]
+df_train = df_train.iloc[:891]
+
+df_train.drop('PassengerId', axis=1, inplace=True)
+df_test.drop(['PassengerId','Survived'], axis=1, inplace=True)
+
+
+```
+## Scaling Numeric Variables 
+
+```{python}
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+
+df_train[['Fare','family_mem']] = scaler.fit_transform(df_train[['Fare','family_mem']])
+df_train = df_train.round({'Fare': 4, 'family_mem': 4})
+df_test[['Fare','family_mem']] = scaler.fit_transform(df_test[['Fare','family_mem']])
+df_test = df_test.round({'Fare': 4, 'family_mem': 4})
+
+```
+
+## Encoding categorical variables
+
+```{python}
+
+
+df_train = pd.get_dummies(df_train, drop_first=True)
+print(df_train.head())
+
+df_test = pd.get_dummies(df_test, drop_first=True)
+
+```
+## Logistic Regression
+
+```{python}
+
+Y = df_train.Survived
+X = df_train.drop(['Survived'], axis=1)
+Y.tail()
+
+from sklearn.linear_model import LogisticRegression
+clf = LogisticRegression().fit(X, Y)
+pred_log = clf.predict(df_test)
+
+```
+```{python}
+pd.DataFrame(pred_log).head()
+pred_log_df =  pd.DataFrame()
+pred_log_df['PassengerId'] = df_test.index
+pred_log_df['Survived'] = pred_log
+pred_log_df.head()
+```
+
+## Kaggle Submission
+
+```{python}
+
+pred_log_df.to_csv('submission.csv', index=False)
 
 ```
 
