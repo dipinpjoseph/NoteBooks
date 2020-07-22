@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>Digit Recognization on MNIST dataset using Keras</title>
+<title>Digit-Recognization-on-MNIST-dataset-using-Keras</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13090,10 +13090,34 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Digit-Recognizer---MNIST,-Keras">Digit Recognizer - MNIST, Keras<a class="anchor-link" href="#Digit-Recognizer---MNIST,-Keras">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Problem-Statement">Problem Statement<a class="anchor-link" href="#Problem-Statement">&#182;</a></h2><p>In this notebook, we will try to solve a deep learning related problem - "<strong>Detecting digits from hand-drawn images"</strong>.</p>
 <p>This problem is hosted on Kaggle as - <em>Digit Recognizer Learn computer vision fundamentals with the famous MNIST data</em> @ <a href="https://www.kaggle.com/c/digit-recognizer/overview">https://www.kaggle.com/c/digit-recognizer/overview</a></p>
 <p>Our goal is to come up with a neural network model which is capable of predicting a digit from hand-written image.</p>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
 </div>
 </div>
 </div>
@@ -13106,7 +13130,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Kaggle API stuffs</span>
@@ -13115,12 +13139,12 @@ div#notebook {
 <span class="n">api</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
 
 <span class="c1"># Downloading titanic dataset</span>
-<span class="n">api</span><span class="o">.</span><span class="n">competition_download_files</span><span class="p">(</span><span class="s1">&#39;digit-recognizer&#39;</span><span class="p">)</span>
+<span class="c1">#api.competition_download_files(&#39;digit-recognizer&#39;)</span>
 
 <span class="c1"># Unzip digit-recognizer.zip</span>
-<span class="kn">import</span> <span class="nn">zipfile</span>
-<span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="s2">&quot;digit-recognizer.zip&quot;</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
-    <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="s2">&quot;digit-recognizer_data&quot;</span><span class="p">)</span>
+<span class="c1">#import zipfile</span>
+<span class="c1">#with zipfile.ZipFile(&quot;digit-recognizer.zip&quot;,&quot;r&quot;) as zip_ref:</span>
+<span class="c1">#    zip_ref.extractall(&quot;digit-recognizer_data&quot;)</span>
     
 <span class="c1"># Loading Dataset</span>
 <span class="c1">#! pip3 install pandas</span>
@@ -13146,6 +13170,7 @@ div#notebook {
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run &#39;chmod 600 /home/dipin/.kaggle/kaggle.json&#39;
+Warning: Your Kaggle API key is readable by other users on this system! To fix this, you can run &#39;chmod 600 /home/dipin/.kaggle/kaggle.json&#39;
    label  pixel0  pixel1  pixel2  pixel3  pixel4  pixel5  pixel6  pixel7  \
 0      1       0       0       0       0       0       0       0       0   
 1      0       0       0       0       0       0       0       0       0   
@@ -13176,12 +13201,411 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Exploratory-Data-Analysis">Exploratory Data Analysis<a class="anchor-link" href="#Exploratory-Data-Analysis">&#182;</a></h2><p>From the sample, we may infer that label column will range from 0-9 and there are 784 pixel values provided (28x28 dimension).</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[2]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>pixel0</th>
+      <th>pixel1</th>
+      <th>pixel2</th>
+      <th>pixel3</th>
+      <th>pixel4</th>
+      <th>pixel5</th>
+      <th>pixel6</th>
+      <th>pixel7</th>
+      <th>pixel8</th>
+      <th>...</th>
+      <th>pixel774</th>
+      <th>pixel775</th>
+      <th>pixel776</th>
+      <th>pixel777</th>
+      <th>pixel778</th>
+      <th>pixel779</th>
+      <th>pixel780</th>
+      <th>pixel781</th>
+      <th>pixel782</th>
+      <th>pixel783</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>42000.000000</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>...</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.00000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>4.456643</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.219286</td>
+      <td>0.117095</td>
+      <td>0.059024</td>
+      <td>0.02019</td>
+      <td>0.017238</td>
+      <td>0.002857</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>2.887730</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>6.312890</td>
+      <td>4.633819</td>
+      <td>3.274488</td>
+      <td>1.75987</td>
+      <td>1.894498</td>
+      <td>0.414264</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.00000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>2.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.00000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>4.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.00000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>7.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.00000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>9.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>254.000000</td>
+      <td>254.000000</td>
+      <td>253.000000</td>
+      <td>253.00000</td>
+      <td>254.000000</td>
+      <td>62.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>8 rows × 785 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since the pixel values range from 0-254, the images must be stored in grey-scale format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Class-Imbalance">Class Imbalance<a class="anchor-link" href="#Class-Imbalance">&#182;</a></h3><p>Since we are dealing with labels 0-9 or a 10 class problem, it is always advised to check for class imbalance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">countplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df_train</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Class Imbalance - Labels&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The labels seem to be nearly balanced. So we can forget about class imbalance issue here.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Dealing-Missing-Values.">Dealing Missing Values.<a class="anchor-link" href="#Dealing-Missing-Values.">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Columns with NAs</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df_train</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_test</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df_test</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[]
+[]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Since there are no missing values in the dataset we may proceed to data scaling.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Scaling-Numeric-Variables">Scaling Numeric Variables<a class="anchor-link" href="#Scaling-Numeric-Variables">&#182;</a></h3><p>All pixel values range from 0 to 254 and we may just divide all by 254 to get corresponding mapping in [0,1].</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># UDF for scaling</span>
+<span class="k">def</span> <span class="nf">scaler</span><span class="p">(</span><span class="n">pixel</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">pixel</span><span class="p">)</span><span class="o">/</span><span class="mi">254</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -13191,49 +13615,491 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Splitting variables</span>
+<span class="n">X_T</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;label&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Y_T</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">label</span>
+<span class="n">X_T</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pixel0</th>
+      <th>pixel1</th>
+      <th>pixel2</th>
+      <th>pixel3</th>
+      <th>pixel4</th>
+      <th>pixel5</th>
+      <th>pixel6</th>
+      <th>pixel7</th>
+      <th>pixel8</th>
+      <th>pixel9</th>
+      <th>...</th>
+      <th>pixel774</th>
+      <th>pixel775</th>
+      <th>pixel776</th>
+      <th>pixel777</th>
+      <th>pixel778</th>
+      <th>pixel779</th>
+      <th>pixel780</th>
+      <th>pixel781</th>
+      <th>pixel782</th>
+      <th>pixel783</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 784 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Applying UDF</span>
+<span class="n">X_T</span> <span class="o">=</span> <span class="n">X_T</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">scaler</span><span class="p">)</span> 
+<span class="n">X_Test</span> <span class="o">=</span> <span class="n">df_test</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">scaler</span><span class="p">)</span> 
+<span class="n">X_T</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>pixel0</th>
+      <th>pixel1</th>
+      <th>pixel2</th>
+      <th>pixel3</th>
+      <th>pixel4</th>
+      <th>pixel5</th>
+      <th>pixel6</th>
+      <th>pixel7</th>
+      <th>pixel8</th>
+      <th>pixel9</th>
+      <th>...</th>
+      <th>pixel774</th>
+      <th>pixel775</th>
+      <th>pixel776</th>
+      <th>pixel777</th>
+      <th>pixel778</th>
+      <th>pixel779</th>
+      <th>pixel780</th>
+      <th>pixel781</th>
+      <th>pixel782</th>
+      <th>pixel783</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>...</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.000000</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+      <td>42000.0</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000863</td>
+      <td>0.000461</td>
+      <td>0.000232</td>
+      <td>0.000079</td>
+      <td>0.000068</td>
+      <td>0.000011</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.024854</td>
+      <td>0.018243</td>
+      <td>0.012892</td>
+      <td>0.006929</td>
+      <td>0.007459</td>
+      <td>0.001631</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>0.996063</td>
+      <td>0.996063</td>
+      <td>1.000000</td>
+      <td>0.244094</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>8 rows × 784 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Encoding-categorical-response-variable---One-hot-Encoding">Encoding categorical response variable - One hot Encoding<a class="anchor-link" href="#Encoding-categorical-response-variable---One-hot-Encoding">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">keras.utils.np_utils</span> <span class="kn">import</span> <span class="n">to_categorical</span>
+<span class="n">Y_T</span><span class="o">=</span> <span class="n">to_categorical</span><span class="p">(</span><span class="n">Y_T</span><span class="p">)</span>
+<span class="n">Y_T</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
     </div>
