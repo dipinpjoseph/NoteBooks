@@ -1,4 +1,4 @@
-Sitemap: https://www.thebearsenal.com/sitemap.xml
+Sitemap: https://notebooks.thebearsenal.com/sitemap.xml
 
 User-agent: *
 Disallow:
