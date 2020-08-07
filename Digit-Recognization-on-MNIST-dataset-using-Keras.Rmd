@@ -1,0 +1,174 @@
+---
+title: "Digit Recognization - MNIST Keras"
+author: "Dipin P Joseph"
+date: "8/6/2020"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem Statement
+
+In this notebook, we will try to solve a deep learning related problem - "**Detecting digits from hand-drawn images**".
+
+This problem is hosted on Kaggle as - Digit Recognizer Learn computer vision fundamentals with the famous MNIST data @ https://www.kaggle.com/c/digit-recognizer/overview.
+
+Our goal is to come up with a neural network model which is capable of predicting a digit from hand-written image.
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+## Importing the dataset
+
+```{python}
+# Loading Dataset
+#! pip3 install kaggle
+
+# Kaggle API stuffs
+from kaggle.api.kaggle_api_extended import KaggleApi
+api = KaggleApi()
+api.authenticate()
+
+# Downloading digit-recognizer dataset
+api.competition_download_files('digit-recognizer')
+
+# Unzip digit-recognizer
+import zipfile
+with zipfile.ZipFile("digit-recognizer.zip","r") as zip_ref:
+    zip_ref.extractall("digit-recognizer-data")
+    
+# Loading Dataset
+#! pip3 install pandas
+import pandas as pd
+import numpy as np
+
+np.random.seed(117)
+pd.set_option('display.expand_frame_repr', False)
+
+df_train = pd.read_csv('digit-recognizer-data/train.csv')
+df_test = pd.read_csv('digit-recognizer-data/test.csv')
+print(df_train.head())
+```
+
+## Exploratory Data Analysis
+
+From the sample, we may infer that label column will range from 0-9 and there are 784 pixel values provided (28x28 dimension).
+
+```{python}
+df_train.describe()
+```
+
+Since the pixel values range from 0-254, the images must be stored in grey-scale format.
+
+### Class Imbalance
+
+Since we are dealing with labels 0-9 or a 10 class problem, it is always advised to check for class imbalance.
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.countplot(x="label", data=df_train).set_title("Class Imbalance - Labels")
+plt.show()
+```
+
+The labels seem to be nearly balanced. So we can forget about class imbalance issue here.
+
+### Dealing Missing Values.
+```{python}
+# Columns with NAs
+print(df_train.columns[df_train.isna().any()].tolist())
+print(df_test.columns[df_test.isna().any()].tolist())
+```
+
+Since there are no missing values in the dataset we may proceed to data scaling.
+
+### Scaling Numeric Variables
+
+All pixel values range from 0 to 254 and we may just divide all by 254 to get corresponding mapping in [0,1].
+
+```{python}
+# UDF for scaling
+def scaler(pixel):
+    return ((pixel)/254)
+
+# Splitting variables
+X_T = df_train.drop(['label'], axis=1)
+Y_T = df_train.label
+X_T.head()
+
+# Applying UDF
+X_T = X_T.apply(scaler) 
+X_Test = df_test.apply(scaler) 
+X_T.describe()
+```
+
+### Reshaping Pixels
+
+```{python}
+X_T = X_T.values.reshape(-1,28,28,1)
+X_Test = X_Test.values.reshape(-1,28,28,1)
+```
+
+### Encoding categorical response variable - One hot Encoding
+
+```{python}
+from keras.utils.np_utils import to_categorical
+Y_T= to_categorical(Y_T)
+```
+
+### Train/Validation Split
+The available data is converted to train and validation sets on ratio 0.7.
+
+```{python}
+from sklearn.model_selection import train_test_split
+
+X_train, X_val, Y_train, Y_val = train_test_split(X_T, Y_T, test_size = 0.3)
+```
+
+## Modelling - Convolutional Neural Network 
+
+Reference - https://www.kaggle.com/poonaml/deep-neural-network-keras-way
+
+```{python}
+from keras.models import  Sequential
+from keras.layers.core import  Lambda , Dense, Flatten, Dropout
+from keras.callbacks import EarlyStopping
+from keras.layers import BatchNormalization, Convolution2D , MaxPooling2D
+
+model= Sequential()
+model.add(Flatten())
+model.add(Dense(10, activation='softmax'))
+
+from keras.optimizers import RMSprop
+model.compile(optimizer=RMSprop(lr=0.001),
+ loss='categorical_crossentropy',
+ metrics=['accuracy'])
+from keras.preprocessing import image
+gen = image.ImageDataGenerator()
+
+batches = gen.flow(X_train, Y_train, batch_size=64)
+val_batches=gen.flow(X_val, Y_val, batch_size=64)
+
+history=model.fit_generator(generator=batches, steps_per_epoch=batches.n, epochs=3, 
+                    validation_data=val_batches, validation_steps=val_batches.n)
+                    
+history_dict = history.history
+history_dict.keys()
+```
+
