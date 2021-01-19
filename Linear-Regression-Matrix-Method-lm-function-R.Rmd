@@ -1,0 +1,122 @@
+---
+title: "Linear Regression - Matrix Method amd lm() function"
+author: "Dipin P Joseph"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+
+  prettydoc::html_pretty:
+    
+    theme: cayman
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Linear Regression using matrix method.
+
+Defining matrix of Predictor Variable, X,
+```{r}
+X <- matrix(c(3,4,5),nrow = 3)
+X
+```
+
+Defining matrix of Outcome Variable, Y
+```{r}
+Y <- matrix(c(5,9,13),nrow = 3)
+Y
+```
+
+Defining X matrix with an extra column of 1's
+```{r}
+one_col <- rep(1,3)
+X_1 <- matrix(rbind(one_col,c(3,4,5)),nrow = 3,byrow = TRUE)
+X_1
+```
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+Calculating Beta matrix with the equation - B=((X'X)^-1)(X'Y)
+
+```{r}
+B<-solve(t(X_1)%*%(X_1))%*%t(X_1)%*%Y
+B
+```
+
+Coefficients for linear regression, Slope-B1, Intercept-B0
+```{r}
+B0 = B[1]
+B1 = B[2]
+B0
+B1
+```
+
+Finding residuals of the linear regression model, Res = Y-(B1*X+B0) which equals zero.
+```{r}
+Y_Pred <-(B1*X+B0)
+Res = Y-Y_Pred
+Res
+```
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+# Linear Regression using lm() function
+
+
+```{r}
+l_reg <- lm(formula = Y ~ X)
+summary(l_reg)
+```
+
+From the summary, R square value is 1 and residual error 0 which implies that model is a perfect fit but highly dependent on perdictor variable and is unrealistic.
+
+
+Plotting X,Y, predicted values and linear model.
+```{r echo=FALSE}
+# Scatter plot for X and Y
+plot(main = 'Linear Regression Y~X',X,Y, xlim = c(0,6) , ylim = c(-10,15), pch=19, col="#13871c", cex=1)
+# Predicted values for X with regression
+Y_pred <- predict.lm(l_reg, newdata = list(x=X))
+# Points with X and predicated vaues of Y
+points(X, Y_pred, col="#d37024", cex=2)
+# Linear regression line
+abline(l_reg, col="#3f4da7", lwd=3)
+legend(0,15, legend=c("Predicted Y", "Actual Y"),
+       col=c("#d37024", "#13871c"), pch=c(1,19), cex=0.8)
+text(x=1, y=-2, labels="y = β0 + β1X = -7+4x", col="#3f4da7",srt=27)
+text(x=0.55, y=-2.75, labels="^     ^      ^", col="#3f4da7",srt=27)
+```
+
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Notebook Check -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-3600373850128255"
+     data-ad-slot="2651335722"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
